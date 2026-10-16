@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import com.kyant.backdrop.catalog.BackdropDemoScaffold
 import com.kyant.backdrop.drawBackdrop
 import com.kyant.backdrop.effects.lens
-import com.kyant.backdrop.effects.vibrancy
 import com.kyant.shapes.RoundedRectangle
 
 @Composable
@@ -39,8 +38,7 @@ fun LazyScrollContainerContent() {
                             backdrop = backdrop,
                             shape = { RoundedRectangle(32f.dp) },
                             effects = {
-                                vibrancy()
-                                lens(16f.dp.toPx(), 32f.dp.toPx())
+                                lens(16f.dp.toPx(), 32f.dp.toPx(), saturation = 1.5f)
                             }
                         )
                         .height(160f.dp)

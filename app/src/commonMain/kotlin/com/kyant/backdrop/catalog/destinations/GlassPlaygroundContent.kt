@@ -34,7 +34,6 @@ import com.kyant.backdrop.catalog.components.LiquidSlider
 import com.kyant.backdrop.drawBackdrop
 import com.kyant.backdrop.effects.blur
 import com.kyant.backdrop.effects.lens
-import com.kyant.backdrop.effects.vibrancy
 import com.kyant.backdrop.highlight.Highlight
 import com.kyant.shapes.RoundedRectangle
 import kotlinx.coroutines.launch
@@ -67,13 +66,13 @@ fun GlassPlaygroundContent() {
                     shape = { RoundedRectangle(256f.dp / 2f * cornerRadiusFrac) },
                     effects = {
                         val minDimension = size.minDimension
-                        vibrancy()
                         blur(blurRadiusDp.dp.toPx())
                         lens(
                             refractionHeight = refractionHeightFrac * minDimension * 0.5f,
                             refractionAmount = refractionAmountFrac * minDimension,
                             depthEffect = true,
-                            chromaticAberration = chromaticAberration > 0f
+                            chromaticAberration = chromaticAberration > 0f,
+                            saturation = 1.5f
                         )
                     },
                     highlight = { Highlight.Plain },
@@ -128,9 +127,8 @@ fun GlassPlaygroundContent() {
                             backdrop = backdrop,
                             shape = { RoundedRectangle(32f.dp) },
                             effects = {
-                                vibrancy()
                                 blur(4f.dp.toPx())
-                                lens(16f.dp.toPx(), 32f.dp.toPx())
+                                lens(16f.dp.toPx(), 32f.dp.toPx(), saturation = 1.5f)
                             },
                             highlight = { Highlight.Plain },
                             exportedBackdrop = sheetBackdrop,

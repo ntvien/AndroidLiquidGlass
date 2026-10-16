@@ -48,7 +48,6 @@ import com.kyant.backdrop.catalog.utils.ProgressConverter
 import com.kyant.backdrop.catalog.utils.rememberUISensor
 import com.kyant.backdrop.drawBackdrop
 import com.kyant.backdrop.effects.lens
-import com.kyant.backdrop.effects.vibrancy
 import com.kyant.backdrop.highlight.Highlight
 import com.kyant.backdrop.highlight.HighlightStyle
 import com.kyant.shapes.Capsule
@@ -115,11 +114,11 @@ fun ControlCenterContent() {
     val glassSurface: DrawScope.() -> Unit = { drawRect(containerColor) }
     val glassEffects: BackdropEffectScope.() -> Unit = {
         val progress = safeEnterProgressAnimation.value
-        vibrancy()
         lens(
             24f.dp.toPx() * progress,
             48f.dp.toPx() * progress,
-            depthEffect = true
+            depthEffect = true,
+            saturation = 1.5f
         )
     }
 
