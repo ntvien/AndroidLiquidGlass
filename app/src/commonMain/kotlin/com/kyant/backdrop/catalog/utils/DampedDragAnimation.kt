@@ -58,6 +58,12 @@ class DampedDragAnimation(
     val progress: Float get() = (value - valueRange.start) / (valueRange.endInclusive - valueRange.start)
     val targetValue: Float get() = valueAnimation.targetValue
     val pressProgress: Float get() = pressProgressAnimation.value
+
+    /**
+     * [pressProgress], but 0 for the end of the release spring (the last ~12 frames below 0.02), where the glass
+     * driven by it is invisible but would still be drawn.
+     */
+    val visiblePressProgress: Float get() = pressProgress.let { if (it < 0.02f) 0f else it }
     val scaleX: Float get() = scaleXAnimation.value
     val scaleY: Float get() = scaleYAnimation.value
     val velocity: Float get() = velocityAnimation.value

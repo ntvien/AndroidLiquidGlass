@@ -54,6 +54,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.sign
 
 @Composable
@@ -145,6 +146,12 @@ fun LiquidBottomTabs(
                 }
         }
 
+        // The lens is a new RenderEffect whenever the effects are applied again, so it grows in 8 steps instead of
+        // every frame of the press animation
+        val lensProgress by remember(dampedDragAnimation) {
+            derivedStateOf { ceil(dampedDragAnimation.visiblePressProgress * 8f) / 8f }
+        }
+
         val interactiveHighlight = remember(animationScope) {
             InteractiveHighlight(
                 animationScope = animationScope,
@@ -204,7 +211,7 @@ fun LiquidBottomTabs(
                         backdrop = backdrop,
                         shape = { Capsule() },
                         effects = {
-                            val progress = dampedDragAnimation.pressProgress
+                            val progress = lensProgress
                             vibrancy()
                             blur(8f.dp.toPx())
                             lens(
@@ -213,8 +220,8 @@ fun LiquidBottomTabs(
                             )
                         },
                         highlight = {
-                            val progress = dampedDragAnimation.pressProgress
-                            Highlight.Default.copy(alpha = progress)
+                            val progress = dampedDragAnimation.visiblePressProgress
+                            if (progress > 0f) Highlight.Default.copy(alpha = progress) else null
                         },
                         onDrawSurface = { drawRect(containerColor) }
                     )
@@ -242,7 +249,7 @@ fun LiquidBottomTabs(
                     backdrop = rememberCombinedBackdrop(backdrop, tabsBackdrop),
                     shape = { Capsule() },
                     effects = {
-                        val progress = dampedDragAnimation.pressProgress
+                        val progress = lensProgress
                         lens(
                             10f.dp.toPx() * progress,
                             14f.dp.toPx() * progress,
@@ -250,19 +257,24 @@ fun LiquidBottomTabs(
                         )
                     },
                     highlight = {
-                        val progress = dampedDragAnimation.pressProgress
-                        Highlight.Default.copy(alpha = progress)
+                        val progress = dampedDragAnimation.visiblePressProgress
+                        if (progress > 0f) Highlight.Default.copy(alpha = progress) else null
                     },
                     shadow = {
-                        val progress = dampedDragAnimation.pressProgress
-                        Shadow(alpha = progress)
+                        val progress = dampedDragAnimation.visiblePressProgress
+                        if (progress > 0f) Shadow(alpha = progress) else null
                     },
                     innerShadow = {
-                        val progress = dampedDragAnimation.pressProgress
-                        InnerShadow(
-                            radius = 8f.dp * progress,
-                            alpha = progress
-                        )
+                        val progress = dampedDragAnimation.visiblePressProgress
+                        // Fixed radius: a new radius is a new blur, alpha is only a layer property
+                        if (progress > 0f) {
+                            InnerShadow(
+                                radius = 8f.dp,
+                                alpha = progress
+                            )
+                        } else {
+                            null
+                        }
                     },
                     layerBlock = {
                         scaleX = dampedDragAnimation.scaleX
@@ -272,7 +284,7 @@ fun LiquidBottomTabs(
                         scaleY *= 1f - (velocity * 0.25f).fastCoerceIn(-0.2f, 0.2f)
                     },
                     onDrawSurface = {
-                        val progress = dampedDragAnimation.pressProgress
+                        val progress = dampedDragAnimation.visiblePressProgress
                         drawRect(
                             if (isLightTheme) Color.Black.copy(0.1f)
                             else Color.White.copy(0.1f),
