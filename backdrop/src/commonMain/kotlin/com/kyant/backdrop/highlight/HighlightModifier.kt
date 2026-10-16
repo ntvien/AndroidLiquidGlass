@@ -80,8 +80,6 @@ internal class HighlightNode(
         }
     private var clipPath: Path? = null
 
-    private val runtimeShaderCache = RuntimeShaderCacheImpl()
-
     private var prevStyle: HighlightStyle? = null
 
     override fun ContentDrawScope.draw() {
@@ -144,7 +142,6 @@ internal class HighlightNode(
             highlightLayer = null
         }
         clipPath = null
-        runtimeShaderCache.clear()
         prevStyle = null
     }
 
@@ -157,7 +154,7 @@ internal class HighlightNode(
                 with(highlight.style) {
                     createShader(
                         shape = shapeProvider.shape,
-                        runtimeShaderCache = runtimeShaderCache
+                        runtimeShaderCache = RuntimeShaderCacheImpl
                     )
                 }
             paint.setRuntimeShader(shader)
